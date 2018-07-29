@@ -19,15 +19,20 @@ class AuthServiceProvider extends ServiceProvider
         \App\Models\User::class  => \App\Policies\UserPolicy::class,
     ];
 
-    /**
-     * Register any authentication / authorization services.
-     *
-     * @return void
-     */
     public function boot()
     {
         $this->registerPolicies();
 
-        //
+        \Horizon::auth(function ($request) {
+            // 是否是站长
+            return \Auth::user()->hasRole('Founder');
+        });
+    }
+
+    public function register()
+    {
+        if (app()->isLocal()) {
+            $this->app->register(\VIACreative\SudoSu\ServiceProvider::class);
+        }
     }
 }
